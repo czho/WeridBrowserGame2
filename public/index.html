@@ -1,0 +1,75 @@
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0px
+        }
+    </style>
+    <title>pixel mmo</title>
+    <script src="p5.min.js"></script>
+    <script src="client.js"></script>
+    <script src="socket.io.js"></script>
+</head>
+
+<body>
+    <script>
+        var socket = io();
+        var player;
+        var players = [];
+        var bullets = [];
+        var started = false
+        let maps;
+        socket.on('bullet', data=>{
+            bullets = data
+            //console.log(data)
+        });
+        socket.on('players', data => {
+            players.push(data);
+            console.log(players);
+        });
+        socket.on('playersf', data => {
+            players = data
+            console.log(data)
+        });
+        socket.on('map', data => {
+            if (started == false) {
+                maps = data;
+                started = true
+            } else window.location.reload();
+        });
+        socket.on('player', data => {
+            player = data;
+        });
+        //socket.emit('player', 'idk')
+
+        socket.on('move', data => {
+            player.x = data[0]
+            player.y = data[1]
+        });
+        socket.on('playermove', data => {
+            //console.log(playero)
+            for (let i = 0; i < players.length; i++) {
+                if (players[i].uuid == data.uuid) {
+                    players[i] = data
+                    return;
+                    console.log(data)
+                }
+            }
+            if (data.uuid !== player.uuid) {
+                players.push(data);
+                console.log(data + 'went thru')
+            }
+        })
+        socket.on('disconnected', data => {
+            for (let i = 0; i < players.length; i++) {
+                if (players[i] == null || players[i].uuid == data.uuid || players[i].uuid == player.uuid) {
+                    players.splice(i);
+                    console.log(data, players[i])
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
