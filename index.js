@@ -2,7 +2,7 @@
 const app = require('express')();
 const express = require('express');
 const http = require('http').Server(app);
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 3000;
 
 //Socket.IO Server as child
 const io = require('socket.io')(http);
@@ -25,7 +25,7 @@ var bulletsUpdate = setInterval(() => {
   if (bullets.length > 0) {
     for (let i = 0; i < bullets.length; i++) {
       bullets[i].time += 10;
-      if (colistion(bullets[i].x += bullets[i].mx, bullets[i].y += bullets[i].my)) {
+      if (colide(bullets[i].x += bullets[i].mx, bullets[i].y += bullets[i].my)) {
         //console.log(colistion(bullets[i].x += bullets[i].mx, bullets[i].y += bullets[i].my))
         bullets[i].x += bullets[i].mx
         bullets[i].y += bullets[i].my
@@ -111,8 +111,26 @@ process.on("uncaughtException", thing => {
   console.log(thing)
 });
 
-function colistion(x, y) {
-  if (x < map.map.length && y < map.map.length && x > -1 && y > -1 && map.map[x][y] != 1)
+function colide(x, y) {
+  if (outofbounds(x,y)||mapcolide(x,y)||bulletcolide(x,y))
     return false
   return true
+}
+function mapcolide(){
+	if(map.map[x,y])
+		return true
+	return false
+}
+function bulletcolide(x,y){
+	for(let i = 0;i<bullets.length;i++){
+		if(bullets[i].x==x&&bullets[i].y==y){
+			return true
+		}
+		return false
+	}
+}
+function outofbounds(x,y){
+if(-1>y||-1>x||y>map.height||map.width>x)
+	return true
+return false
 }
