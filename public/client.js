@@ -54,7 +54,7 @@ function drawScene() {
     if (keyIsDown(32) && (abs(mx) + abs(my) !== 0)) {
       socket.emit('shoot', [mx, my])
     	//console.log([mx,my])
-      }
+    }
       if (maps.map[player.x + mx][player.y + my] == 0) {
         if (abs(mx) + abs(my) > 0) {
           player.x += mx;

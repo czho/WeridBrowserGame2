@@ -22,24 +22,7 @@ var sockets = [];
 
 var bullets = [];
 var bulletsUpdate = setInterval(() => {
-	if (bullets.length > 0) {
-		for (let i = 0; i < bullets.length; i++) {
-			bullets[i].time += 10;
-			if (colide(bullets[i].x += bullets[i].mx, bullets[i].y += bullets[i].my)) {
-				//console.log(colistion(bullets[i].x += bullets[i].mx, bullets[i].y += bullets[i].my))
-				bullets[i].x += bullets[i].mx
-				bullets[i].y += bullets[i].my
-			}
-			if (bullets[i].time > bullets[i].maxTime) {
-				//bullets = bullets.splice(i)
-				bullets.splice(0, i)
-				//console.log(i)
-			}
-
-
-		}
-		io.emit('bullet', bullets);
-	}
+UpdateBullets();
 }, 50);
 
 //On Connection Event
@@ -112,9 +95,9 @@ process.on("uncaughtException", thing => {
 });
 
 function colide(x, y) {
-	if (outofbounds(x, y) || mapcolide(x, y) || bulletcolide(x, y))
-		return false
-	return true
+	if (!isNaN(x)&&!isNaN(y)&&!outofbounds(x, y) && !mapcolide(x, y) && !bulletcolide(x, y))
+		return true
+	return false
 }
 function mapcolide() {
 	if (map.map[x, y])
@@ -133,4 +116,27 @@ function outofbounds(x, y) {
 	if (-1 > y || -1 > x || y > map.height || map.width > x)
 		return true
 	return false
+}
+
+
+
+
+
+function UpdateBullets() {
+	if (bullets.length > 0) {
+		for (let i = 0; i < bullets.length; i++) {
+			bullets[i].time += 10;
+			if (colide(bullets[i].x += bullets[i].mx, bullets[i].y += bullets[i].my)) {
+				//console.log(colistion(bullets[i].x += bullets[i].mx, bullets[i].y += bullets[i].my))
+				bullets[i].x += bullets[i].mx
+				bullets[i].y += bullets[i].my
+			}
+			if (bullets[i].time > bullets[i].maxTime) {
+				//bullets = bullets.splice(i)
+				bullets.splice(0, i)
+				//console.log(i)
+			}
+		}
+		io.emit('bullet', bullets);
+	}
 }
