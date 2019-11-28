@@ -31,7 +31,6 @@ function drawScene() {
   if (maps&&player) {
     //fill(0)
     //push();
-
     //pop();
     //text(player.x,0,0)
     //console.log(player.x,player.y)
@@ -113,19 +112,14 @@ function drawScene() {
     	push();
     	if (((player.x) - int((width / 2) / sc) + i > -1) && ((player.y) - int((height / 2) / sc) + j > -1)) { 
         //console.log(i, j)
-      	if (player.x - int((width / 2) / sc) + i < maps.map.length && player.y - int((height / 2) / sc) + j < maps.map.length) {
-          if (maps.map[(player.x) - int((width / 2) / sc) + i][(player.y) - int((height / 2) / sc) + j]) {
-            fill(0);
+
+            //fill(255);
             rect(((player.x) - int((width / 2) / sc) + i) * sc, ((player.y) - int((height / 2) / sc) + j) * sc, sc, sc)
             //console.log(i, j);
             ff += 1;
-          }
-        } else{
-          			fill(0);
-                rect(((player.x) - int((width / 2) / sc) + i) * sc, ((player.y) - int((height / 2) / sc) + j) * sc, sc, sc)
-              }
+          
       } else{
-              fill(0);
+              fill(255);
               rect(((player.x) - int((width / 2) / sc) + i) * sc, ((player.y) - int((height / 2) / sc) + j) * sc, sc, sc)
             }
     pop();

@@ -9,13 +9,12 @@ const io = require('socket.io')(http);
 
 //Scripts loaded Player, Map defined and utils loaded 
 const Player = require('./player');
-const utils = require('./utils');
-const mapInstance = require('./map');
 const bullet = require('./bullet');
 
 //New Map called
 const seed = 61;
-const map = new mapInstance(250, 250, seed, true);
+const map = [100,100]
+
 
 //Socket array
 var sockets = [];
@@ -35,21 +34,17 @@ io.on('connection', function(socket) {
 	//console.log(players)
 	//Adds player to socket array
 
-
-	//Emits map
-	socket.emit('map', map);
-
 	//Defines the on create player event
 	socket.on('player', (data) => {
 		sockets.push(socket);
 		//Defines socket.player as new Player;
-		socket.player = new Player(utils.spawn(map.map), data, socket.uuid, [Math.random() * 255, Math.random() * 255, Math.random() * 255]);
+		socket.player = new Player(spawn(map.map), data, socket.uuid, [Math.random() * 255, Math.random() * 255, Math.random() * 255]);
 
 		//Gives client the player date, x, y, uuid, map, name and color of its player instace.
 		socket.emit('player', socket.player);
 		socket.on('move', (data) => {
 			if (socket.player != undefined && data instanceof Array && data.length == 2 &&
-				socket.player.x + data[0] < map.map.length && socket.player.y + data[1] < map.map.length && socket.player.x + data[0] > -1 && socket.player.y + data[1] > -1 && map.map[socket.player.x + data[0]][socket.player.y + data[1]] != undefined && map.map[socket.player.x + data[0]][socket.player.y + data[1]] != 1 &&
+		  outofbounds(socket.player.x+data[0],socket.player.y+data[1]) &&
 				(Math.abs(data[0]) == 1 || Math.abs(data[1]) == 1)) {
 				if (Math.abs(data[0]) == 1) {
 					socket.player.x += Math.floor(data[0]);
@@ -95,12 +90,7 @@ process.on("uncaughtException", thing => {
 });
 
 function colide(x, y) {
-	if (!isNaN(x)&&!isNaN(y)&&!outofbounds(x, y) && !mapcolide(x, y) && !bulletcolide(x, y))
-		return true
-	return false
-}
-function mapcolide() {
-	if (map.map[x, y])
+	if (!isNaN(x)&&!isNaN(y)&&!outofbounds(x, y) && !bulletcolide(x, y))
 		return true
 	return false
 }
@@ -113,7 +103,7 @@ function bulletcolide(x, y) {
 	}
 }
 function outofbounds(x, y) {
-	if (-1 > y || -1 > x || y > map.height || map.width > x)
+	if (0 > y || 0 > x || y > map.height || map.width > x)
 		return true
 	return false
 }
@@ -139,4 +129,9 @@ function UpdateBullets() {
 		}
 		io.emit('bullet', bullets);
 	}
+}
+
+
+function spawn(){
+	return [Math.floor(Math.random()*map[0]),Math.floor(Math.random()*map[1])]
 }
